@@ -1,58 +1,52 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # this section of the code reads in the header information of the data
 # file expecting the Device Name, Device SN, Device SW Build Type, and
 # Device SW Build Number. If your data file did not collect that
 # information, it may affect the subsequent sections of this script.
-file = open('./dev.txt','r')
-lines = file.readlines()
-device_info = lines[1:5]
-device_name =           device_info[0].split()[1]
-device_sn   =           device_info[1].split()[1]
-device_sw_build_type =  device_info[2].split()[1]
-device_sw_build_num =   device_info[3].split()[1]
-print 'device_name =            ', device_name
-print 'device_sn =              ', device_sn
-print 'device_sw_build_type =   ', device_sw_build_type
-print 'device_sw_build_num =    ', device_sw_build_num
+file            = open('./20171024T141931_walleye_HT7841A00732.log','r')
+lines           = file.readlines()
+device          = lines[0].rstrip('\n')
+device_sn       = lines[1].rstrip('\n')
+android_build   = lines[2].rstrip('\n')
+vr_home         = lines[3].rstrip('\n')
+vr_core         = lines[4].rstrip('\n')
 
-# Now, for the fun part
-time_stamps =       []
-battery_charge =    []
-t_zone1 =           []
-data_header =       lines[6]
-data =              lines[7:]
-print data_header
-time_stamp =    [] # HH:MM:SS
-battery =       [] # %
-current =       [] # micro-amps
-voltage =       [] # micro-volts
-tz1 =           [] # Celsius
+# # Now, for the fun part
+data_header     = lines[5]
+timestamp       = []
+battery_charge  = []
+tz0             = []
+data            = lines[6:]
+print data
+#print data
+#print data[0]
+print list(data)
+
 for i in range(0,len(data),1):
-    tmp =           data[i].split()
-    time_stamp =    time_stamp + [tmp[0]]
-    battery =       battery + [tmp[1]]
-    current =       current + [tmp[2]]
-    voltage =       voltage + [tmp[3]]
-    tz1 =           tz1 + [tmp[4]]
+    tmp             = ([s.replace('\n','') for s in data])
+    #timestamp       = timestamp + [tmp[0]]
+    #battery_charge  = battery_charge + [tmp[1]]
+    #battery_voltage = current + [tmp[2]]
+    #voltage         = voltage + [tmp[3]]
+    #tz0             = tz0 + [tmp[6]]
 
 
 
-file.close()
-
-x_plot_vals = []
-y_plot_vals = []
-for i in range(1,len(time_stamp),1):
-    tmp = [float(current[i])/1000000]
-    print tmp
-    x_plot_vals = x_plot_vals + [str((i*10)/float(3600))]
-    y_plot_vals = y_plot_vals + [float(current[i])/1000000]
-
-x_plot_vals = map(float,x_plot_vals)
-y_plot_vals = map(float,y_plot_vals)
-
-plt.plot(x_plot_vals,y_plot_vals)
-plt.ylabel('battery charge (%)')
-plt.xlabel('time (hours)')
-plt.show()
-
+#print float(tz0[0])
+# x_plot_vals = []
+# y_plot_vals = []
+# for i in range(1,len(timestamp),1):
+#     tmp = [float(tz0[i])/100]
+#     print tmp
+#     x_plot_vals = x_plot_vals + [str((i*10)/float(3600))]
+#     y_plot_vals = y_plot_vals + [float(tz0[i])/100]
+#
+# x_plot_vals = map(float,x_plot_vals)
+# y_plot_vals = map(float,y_plot_vals)
+#
+# plt.plot(x_plot_vals,y_plot_vals)
+# plt.ylabel('battery charge (%)')
+# plt.xlabel('time (hours)')
+# plt.show()
+#

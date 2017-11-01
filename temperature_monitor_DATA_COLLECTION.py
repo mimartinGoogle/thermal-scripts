@@ -8,6 +8,7 @@
 ## TO DO: add text to include the software build name next to the build number in the log header
 ## TO DO: note the temperature zones of interest for each device; i.e., which one is referenced for throttling
 ## TO DO: write a separate script that processes the log data and makes plots
+## TO DO: add bugreport to final step of code (outside of loop)
 
 import commands
 import time
@@ -53,16 +54,16 @@ vr_core         = tmp2_vr_core.lstrip('versionName=')
 ######################### end getting device info ##############################
 
 ## run an app on the device
-dreambench = 'adb -s '+ serial_num + ' ' + 'shell am start -n "com.google.vr.apps.dreambench/.MainActivity"'
-print dreambench
-v = commands.getoutput(dreambench)
-print v
+# dreambench = 'adb -s '+ serial_num + ' ' + 'shell am start -n "com.google.vr.apps.dreambench/.MainActivity"'
+# print dreambench
+# v = commands.getoutput(dreambench)
+# print v
 
 ########################### Initialize Logfile #################################
 ds = time.strftime('%Y%m%d')
 ts = time.strftime('%H%M%S')
 log_filename = ds + 'T' + ts + '_' + product + '_' + serial_num + '.log'
-logging.basicConfig(format='%(levelname)s:%(message)s',filename=log_filename,level=logging.DEBUG)
+logging.basicConfig(format='%(message)s',filename=log_filename,level=logging.DEBUG)
 logging.info(product)
 logging.info(serial_num)
 logging.info(android_build)
@@ -138,10 +139,10 @@ for i in range(loops):
     gpu = commands.getoutput('adb shell cat /sys/class/kgsl/kgsl-3d0/devfreq/cur_freq')
     # take and save a screen shit
     screencap           = commands.getoutput('adb shell screencap -p /sdcard/test-img.png')
-    transfer_capture = 'adb pull /sdcard/test-img.png /Users/mimartin/Documents/google/thermal_scripts/vega/screen_caps/' + ds + 'T' + ts + '_' + product + '_' + serial_num + '.png'
+    transfer_capture = 'adb pull /sdcard/test-img.png /Users/mimartin/Documents/GitHub/thermal_scripts/vega/screen_caps/' + ds + 'T' + ts + '_' + product + '_' + serial_num + '.png'
     transfer_screencap  = commands.getoutput(transfer_capture)
     ############################## End Collecting Data #############################
     ########################## Begin Logging Data to file ##########################
     log_info = timestamp,battery,voltage,current,tz0,tz1,tz2,tz3,tz4,tz5,tz6,tz7,tz8,tz9,tz10,tz11,tz12,tz13,tz14,tz15,tz16,tz17,tz18,tz19,tz20,tz21,tz22,tz23,tz24,tz25,tz26,tz27,tz28,tz29,tz30,tz33,tz34,tz35,tz36,cpu0,cpu1,cpu2,cpu3,cpu4,cpu5,cpu6,cpu7,bus,gpu
     logging.info(log_info)
-    time.sleep(7)
+    time.sleep(1)
