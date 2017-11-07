@@ -14,6 +14,7 @@ import commands
 import time
 import string
 import logging
+import os
 
 ######################### begin getting the device info ########################
 # product name #
@@ -59,11 +60,23 @@ vr_core         = tmp2_vr_core.lstrip('versionName=')
 # v = commands.getoutput(dreambench)
 # print v
 
-########################### Initialize Logfile #################################
-ds = time.strftime('%Y%m%d')
-ts = time.strftime('%H%M%S')
-log_filename = ds + 'T' + ts + '_' + product + '_' + serial_num + '.log'
-logging.basicConfig(format='%(message)s',filename=log_filename,level=logging.DEBUG)
+########################### Initialize Logging #################################
+current_working_directory   = os.getcwd()
+csv_data_folder             = '/_csv_files'
+screen_caps_folder          = '/_screen_caps'
+app_name                    = '/mekorama'
+ds                          = time.strftime('%Y%m%d')
+ts                          = time.strftime('%H%M%S')
+chamber_temperature         = '30C'
+csv_data_directory          = current_working_directory + csv_data_folder + '/' + chamber_temperature + app_name
+screen_caps_directory       = current_working_directory + screen_caps_folder + '/' + chamber_temperature + app_name
+if not os.path.exists(csv_data_directory):
+    os.makedirs(csv_data_directory)
+if not os.path.exists(screen_caps_directory):
+    os.makedirs(screen_caps_directory)
+
+log_filename = csv_data_directory + '/'+ ds + 'T' + ts + '_' + product + '_' + serial_num + '.csv'
+logging.basicConfig(format='%s',filename=log_filename,level=logging.DEBUG)
 logging.info(product)
 logging.info(serial_num)
 logging.info(android_build)
@@ -73,7 +86,7 @@ log_info = ['timestamp','battery_%','battery_voltage','battery_current','tz0','t
 logging.info(log_info)
 ########################### End Logfile Initialization #########################
 ############################# Begin Collecting Data ############################
-loops = 90
+loops = 1
 for i in range(loops):
     print str(i) +' ' + time.strftime('%X')
 
@@ -110,16 +123,16 @@ for i in range(loops):
     tz24 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone24/temp')
     tz25 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone25/temp')
     tz26 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone26/temp')
-    tz27 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone27/temp')
-    tz28 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone28/temp')
+    ## not accessible on vega ## tz27 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone27/temp')
+    ## not accessible on vega ## tz28 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone28/temp')
     tz29 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone29/temp')
     tz30 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone30/temp')
     ## not on Vega ## tz31 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone31/temp')
     ## not on Vega ## tz32 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone32/temp')
-    tz33 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone33/temp')
-    tz34 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone34/temp')
-    tz35 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone35/temp')
-    tz36 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone36/temp')
+    ## not accessible on vega ## tz33 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone33/temp')
+    ## not accessible on vega ## tz34 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone34/temp')
+    ## not accessible on vega ## tz35 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone35/temp')
+    ## not accessible on vega ## tz36 = commands.getoutput('adb shell cat /sys/class/thermal/thermal_zone36/temp')
 
     # get battery info
     battery = commands.getoutput('adb shell cat /sys/class/power_supply/battery/capacity')
@@ -139,10 +152,10 @@ for i in range(loops):
     gpu = commands.getoutput('adb shell cat /sys/class/kgsl/kgsl-3d0/devfreq/cur_freq')
     # take and save a screen shit
     screencap           = commands.getoutput('adb shell screencap -p /sdcard/test-img.png')
-    transfer_capture = 'adb pull /sdcard/test-img.png /Users/mimartin/Documents/GitHub/thermal_scripts/vega/screen_caps/' + ds + 'T' + ts + '_' + product + '_' + serial_num + '.png'
+    transfer_capture = 'adb pull /sdcard/test-img.png' + ' ' + screen_caps_directory +'/' + ds + 'T' + ts + '_' + product + '_' + serial_num + '.png'
     transfer_screencap  = commands.getoutput(transfer_capture)
     ############################## End Collecting Data #############################
     ########################## Begin Logging Data to file ##########################
-    log_info = timestamp,battery,voltage,current,tz0,tz1,tz2,tz3,tz4,tz5,tz6,tz7,tz8,tz9,tz10,tz11,tz12,tz13,tz14,tz15,tz16,tz17,tz18,tz19,tz20,tz21,tz22,tz23,tz24,tz25,tz26,tz27,tz28,tz29,tz30,tz33,tz34,tz35,tz36,cpu0,cpu1,cpu2,cpu3,cpu4,cpu5,cpu6,cpu7,bus,gpu
+    log_info = timestamp,battery,voltage,current,tz0,tz1,tz2,tz3,tz4,tz5,tz6,tz7,tz8,tz9,tz10,tz11,tz12,tz13,tz14,tz15,tz16,tz17,tz18,tz19,tz20,tz21,tz22,tz23,tz24,tz25,tz26,tz29,tz30,cpu0,cpu1,cpu2,cpu3,cpu4,cpu5,cpu6,cpu7,bus,gpu
     logging.info(log_info)
-    time.sleep(1)
+    time.sleep(6)
